@@ -1,5 +1,7 @@
-﻿namespace Odem.WebAPI.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace Odem.WebAPI.Models;
+[PrimaryKey(nameof(Id))]
 public class Ticket
 {
     public string Id { get; } = Guid.NewGuid().ToString();
