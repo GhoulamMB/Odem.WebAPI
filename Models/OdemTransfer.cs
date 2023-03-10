@@ -2,5 +2,6 @@
 
 public class OdemTransfer : Transaction
 {
-    
+    public required Wallet From { get; init; }
+    public required Wallet To { get; init; }
 }
