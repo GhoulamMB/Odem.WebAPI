@@ -4,6 +4,7 @@ namespace Odem.WebAPI.Services;
 
 public interface IAuthenticationService
 {
-    Task<Client> FindUserByEmail(string email);
-    Task<bool> Login(string email, string password);
+    Task<Client?> FindUserByEmail(string email);
+    Task<Client?> Login(string email, string password);
+    Task<bool> ChangePassword(string email,string password);
 }
