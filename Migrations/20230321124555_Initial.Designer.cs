@@ -12,7 +12,7 @@ using Odem.WebAPI;
 namespace Odem.WebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230310171113_Initial")]
+    [Migration("20230321124555_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

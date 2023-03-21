@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Odem.WebAPI.Models;
+using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
 
 namespace Odem.WebAPI.Controllers
@@ -16,7 +16,7 @@ namespace Odem.WebAPI.Controllers
         }
 
         [HttpGet("login")]
-        public async Task<Client?> Login(string email,string password)
+        public async Task<ClientResponse?> Login(string email,string password)
         {
             return await _authenticationService.Login(email, password);
         }

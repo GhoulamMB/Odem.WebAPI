@@ -13,9 +13,11 @@ public class DataContext : DbContext
     public DbSet<Ticket>? Tickets { get; set; }
     public DbSet<Wallet>? Wallets { get; set; }
 
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer("Server=adbe54a.online-server.cloud;User ID=sa;Password=153759759mM;Database=Odemdb;TrustServerCertificate=True;Trusted_Connection=True;Integrated Security=false;");
+        optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=Odemdb;TrustServerCertificate=True;Trusted_Connection=True;");
+        //optionsBuilder.UseSqlServer(Configuration.GetSection("connection_string").Value);
     }
 }

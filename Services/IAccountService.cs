@@ -1,8 +1,8 @@
-﻿using Odem.WebAPI.Models;
+﻿using Odem.WebAPI.Models.requests;
 
 namespace Odem.WebAPI.Services;
 
 public interface IAccountService
 {
-    Task<bool> Register(Client client);
+    Task<bool> Register(UserRequest request);
 }
