@@ -6,9 +6,9 @@ public class AuthenticationService : IAuthenticationService
 {
     private readonly DataContext _context;
 
-    public AuthenticationService(DataContext context)
+    public AuthenticationService()
     {
-        _context = context;
+        _context = new();
     }
     
     public Task<Client?> FindUserByEmail(string email)
@@ -22,7 +22,7 @@ public class AuthenticationService : IAuthenticationService
         var isValidPassword = client?.Password == password;
         if (!isValidPassword)
         {
-            throw new Exception("Invalid Password");
+            return null;
         }
         return Task.FromResult(client);
     }
