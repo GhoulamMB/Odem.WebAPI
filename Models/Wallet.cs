@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Odem.WebAPI.Models;
 [PrimaryKey(nameof(Id))]
@@ -7,5 +6,5 @@ namespace Odem.WebAPI.Models;
 public class Wallet
 {
     public string Id { get;} = Guid.NewGuid().ToString();
-    public double Balance { get; set; } = 0.0;
+    public double Balance { get; set; }
 }

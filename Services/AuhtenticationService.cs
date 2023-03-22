@@ -34,7 +34,9 @@ public class AuthenticationService : IAuthenticationService
     public Task<ClientResponse> Login(string email, string password)
     {
         var client = FindUserByEmail(email).Result;
-        if (client is null || client.Password != password) return null!;
+        
+        if (client is null || !Crypto.CompareBcrypt(password, client.Password)) return null!;
+        
         var result = new ClientResponse()
         {
             FirstName = client.FirstName,

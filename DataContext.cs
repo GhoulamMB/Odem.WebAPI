@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Odem.WebAPI.Models;
-
 namespace Odem.WebAPI;
 
 public class DataContext : DbContext

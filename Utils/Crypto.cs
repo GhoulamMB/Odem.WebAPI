@@ -8,4 +8,9 @@ public static class Crypto
         var salt = BCrypt.GenerateSalt(12);
         return BCrypt.HashPassword(arg, salt);
     }
+    
+    public static bool CompareBcrypt(string arg, string hash)
+    {
+        return BCrypt.Verify(arg, hash);
+    }
 }
