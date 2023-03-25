@@ -12,7 +12,6 @@ public class DataContext : DbContext
     public DbSet<Ticket>? Tickets { get; set; }
     public DbSet<Wallet>? Wallets { get; set; }
 
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
