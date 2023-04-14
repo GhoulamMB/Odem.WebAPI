@@ -9,4 +9,5 @@ public interface IAdminService
     public Task<Admin> Login(string email,string password);
     public Task<List<OdemTransfer>> GetTransactions();
     public Task<bool> CreateAdmin(UserRequest admin);
+    public Task<List<Client>> GetClients();
 }

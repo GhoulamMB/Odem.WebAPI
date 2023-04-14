@@ -39,7 +39,7 @@ public class AdminService : IAdminService
 
     public Task<List<OdemTransfer>> GetTransactions()
     {
-        var transactions = _context.OdemTransfers.ToList();
+        var transactions = _context.OdemTransfers.Include(o=>o.From).Include(o=>o.To).ToList();
         return Task.FromResult(transactions);
     }
 
@@ -50,5 +50,10 @@ public class AdminService : IAdminService
         _context.Admins.Add(newAdmin);
         _context.SaveChanges();
         return Task.FromResult(true);
+    }
+
+    public Task<List<Client>> GetClients()
+    {
+        return Task.FromResult(_context.Clients.Include(c=>c.Address).Include(c=>c.Wallet).ToList());
     }
 }

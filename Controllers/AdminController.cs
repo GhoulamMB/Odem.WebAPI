@@ -34,5 +34,11 @@ namespace Odem.WebAPI.Controllers
         {
             return await _adminService.CreateAdmin(admin);
         }
+        
+        [HttpGet("clients")]
+        public async Task<List<Client>> GetClients()
+        {
+            return await _adminService.GetClients();
+        }
     }
 }
