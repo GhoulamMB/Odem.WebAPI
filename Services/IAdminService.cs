@@ -11,4 +11,5 @@ public interface IAdminService
     public Task<bool> CreateAdmin(UserRequest admin);
     public Task<List<Client>> GetClients();
     public Task<bool> DeleteClient(string email);
+    public Task<bool> UpdateClient(UserRequest client);
 }

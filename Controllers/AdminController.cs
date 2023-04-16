@@ -46,5 +46,11 @@ namespace Odem.WebAPI.Controllers
         {
             return await _adminService.DeleteClient(email);
         }
+        
+        [HttpPut("update")]
+        public async Task<bool> UpdateClient(UserRequest client)
+        {
+            return await _adminService.UpdateClient(client);
+        }
     }
 }

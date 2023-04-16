@@ -17,6 +17,8 @@ public class AdminService : IAdminService
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<UserRequest, Admin>();
+            cfg.CreateMap<UserRequest, Client>();
+            cfg.CreateMap<AddressRequest, Address>();
         });
         _mapper = mapperConfiguration.CreateMapper();
     }
@@ -65,6 +67,22 @@ public class AdminService : IAdminService
         {
             return Task.FromResult(false);
         }
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> UpdateClient(UserRequest client)
+    {
+        var existingClient = _context.Clients.SingleOrDefault(c => c.Email == client.Email);
+        if (existingClient == null) return Task.FromResult(false);
+
+        var requestClient = _mapper.Map<Client>(client);
+        requestClient.Address = _mapper.Map<Address>(client.Address);
+        _context.Clients.Remove(existingClient);
+        _context.Clients.Add(requestClient);
+        
+
+
+        _context.SaveChanges();
         return Task.FromResult(true);
     }
 }
