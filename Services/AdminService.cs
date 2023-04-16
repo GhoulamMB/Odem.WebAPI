@@ -56,4 +56,15 @@ public class AdminService : IAdminService
     {
         return Task.FromResult(_context.Clients.Include(c=>c.Address).Include(c=>c.Wallet).ToList());
     }
+
+    public Task<bool> DeleteClient(string email)
+    {
+        var tmp = _context.Clients.Remove(_context.Clients.First(c => c.Email == email));
+        _context.SaveChanges();
+        if (tmp.Entity is null)
+        {
+            return Task.FromResult(false);
+        }
+        return Task.FromResult(true);
+    }
 }

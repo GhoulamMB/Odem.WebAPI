@@ -40,5 +40,11 @@ namespace Odem.WebAPI.Controllers
         {
             return await _adminService.GetClients();
         }
+        
+        [HttpDelete]
+        public async Task<bool> DeleteClient(string email)
+        {
+            return await _adminService.DeleteClient(email);
+        }
     }
 }
