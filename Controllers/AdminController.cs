@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
