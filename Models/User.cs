@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Odem.WebAPI.Models;
+
 
 public abstract class User
 {

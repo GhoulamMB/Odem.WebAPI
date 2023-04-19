@@ -1,12 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json.Serialization;
 using Odem.WebAPI;
 using Odem.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -15,6 +17,7 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ISupportService, SupportService>();
 
 var app = builder.Build();
 

@@ -5,7 +5,6 @@ namespace Odem.WebAPI.Models;
 public class Client:User
 {
     public string Uid { get; } = Guid.NewGuid().ToString();
-    
     public ClientStatus Status { get; set; } = ClientStatus.Active;
     public Wallet Wallet { get; set; } = new();
 

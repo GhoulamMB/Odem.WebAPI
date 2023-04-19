@@ -10,6 +10,16 @@ public class Ticket
     public DateTime CloseDate { get; set; }
     public required Admin HandledBy { get; set; }
     public required Client CreatedBy { get; init; }
+    public List<Message> Messages { get; init; } = new();
+}
+
+[PrimaryKey("Id")]
+public class Message
+{
+    public string Id { get; }= Guid.NewGuid().ToString();
+    public required string Content { get; set; }
+    public DateTime Timestamp { get; set; }
+    public bool isClientMessage { get; init; }
 }
 
 public enum Status

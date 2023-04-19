@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
 using Odem.WebAPI.Services;
@@ -19,7 +20,13 @@ namespace Odem.WebAPI.Controllers
         [HttpGet("login")]
         public async Task<Admin> Login(string email,string password)
         {
-            return await _adminService.Login(email, password);
+            var admin = await _adminService.Login(email, password);
+            var settings = new JsonSerializerSettings
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            };
+            var json = JsonConvert.SerializeObject(admin, settings);
+            return JsonConvert.DeserializeObject<Admin>(json);
         }
         
         [HttpGet("transactions")]
