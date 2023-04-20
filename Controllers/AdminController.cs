@@ -20,13 +20,7 @@ namespace Odem.WebAPI.Controllers
         [HttpGet("login")]
         public async Task<Admin> Login(string email,string password)
         {
-            var admin = await _adminService.Login(email, password);
-            var settings = new JsonSerializerSettings
-            {
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
-            };
-            var json = JsonConvert.SerializeObject(admin, settings);
-            return JsonConvert.DeserializeObject<Admin>(json);
+            return await _adminService.Login(email, password);
         }
         
         [HttpGet("transactions")]
@@ -57,6 +51,24 @@ namespace Odem.WebAPI.Controllers
         public async Task<bool> UpdateClient(UserRequest client)
         {
             return await _adminService.UpdateClient(client);
+        }
+        
+        [HttpPost("createticket")]
+        public async Task<Ticket> CreateTicket(string message, string userId, string adminId)
+        {
+            return await _adminService.CreateTicket(message, userId, adminId);
+        }
+        
+        [HttpGet("tickets")]
+        public async Task<List<Ticket>> GetTickets()
+        {
+            return await _adminService.GetTickets();
+        }
+        
+        [HttpGet("ticket")]
+        public async Task<Ticket> GetTicket(string ticketId)
+        {
+            return await _adminService.GetTicket(ticketId);
         }
     }
 }

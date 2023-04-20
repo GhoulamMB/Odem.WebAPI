@@ -12,4 +12,7 @@ public interface IAdminService
     public Task<List<Client>> GetClients();
     public Task<bool> DeleteClient(string email);
     public Task<bool> UpdateClient(UserRequest client);
+    public Task<Ticket> CreateTicket(string message, string userId, string adminId);
+    public Task<Ticket> GetTicket(string ticketId);
+    public Task<List<Ticket>> GetTickets();
 }

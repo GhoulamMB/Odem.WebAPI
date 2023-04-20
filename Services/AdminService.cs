@@ -85,4 +85,47 @@ public class AdminService : IAdminService
         _context.SaveChanges();
         return Task.FromResult(true);
     }
+
+    public Task<Ticket> CreateTicket(string message, string userId, string adminId)
+    {
+        var client = _context.Clients.First(c=>c.Uid == userId);
+        var admin = _context.Admins.First(c=>c.Uid == adminId);
+        if (client is null) return null!;
+        var ticket = new Ticket
+        {
+            CreatedBy = client,
+            Messages = new List<Message>()
+            {
+                new()
+                {
+                    Content = message,
+                    isClientMessage = true
+                }
+            },
+            HandledBy = admin
+        };
+        _context.Tickets.Add(ticket);
+        _context.SaveChanges();
+        return Task.FromResult(ticket);
+    }
+
+    public Task<Ticket> GetTicket(string ticketId)
+    {
+        var ticket = _context.Tickets?
+            .Include(t => t.CreatedBy)
+            .Include(t => t.HandledBy)
+            .Include(m=>m.Messages)
+            .First(t => t.Id == ticketId);
+        return Task.FromResult(ticket);
+    }
+
+    public Task<List<Ticket>> GetTickets()
+    {
+        var tickets = _context.Tickets?
+            .Include(t => t.CreatedBy)
+            .Include(t => t.HandledBy)
+            .Include(m=>m.Messages)
+            .ToList();
+        return Task.FromResult(tickets);
+    }
 }
