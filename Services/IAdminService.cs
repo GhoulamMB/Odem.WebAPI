@@ -15,4 +15,5 @@ public interface IAdminService
     public Task<Ticket> CreateTicket(string message, string userId, string adminId);
     public Task<Ticket> GetTicket(string ticketId);
     public Task<List<Ticket>> GetTickets();
+    public Task<bool> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage);
 }

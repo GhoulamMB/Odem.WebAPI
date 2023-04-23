@@ -128,4 +128,23 @@ public class AdminService : IAdminService
             .ToList();
         return Task.FromResult(tickets);
     }
+
+    public Task<bool> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage)
+    {
+        var ticket = _context.Tickets?
+            .Include(t => t.CreatedBy)
+            .Include(t => t.HandledBy)
+            .Include(m=>m.Messages)
+            .First(t => t.Id == ticketId);
+        if (ticket is null) return Task.FromResult(false);
+        var admin = _context.Admins?.First(a => a.Uid == adminId);
+        ticket.HandledBy = admin!;
+        ticket.Messages.Add(new Message
+        {
+            Content = message,
+            isClientMessage = isClientMessage
+        });
+        _context.SaveChanges();
+        return Task.FromResult(true);
+    }
 }

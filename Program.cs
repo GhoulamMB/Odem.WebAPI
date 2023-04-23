@@ -4,7 +4,6 @@ using Odem.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
@@ -18,7 +17,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ISupportService, SupportService>();
-
+builder.WebHost.UseUrls("http://*:5000");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

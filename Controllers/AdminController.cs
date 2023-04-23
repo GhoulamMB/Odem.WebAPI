@@ -70,5 +70,11 @@ namespace Odem.WebAPI.Controllers
         {
             return await _adminService.GetTicket(ticketId);
         }
+        
+        [HttpPut("updateticket")]
+        public async Task<bool> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage=true)
+        {
+            return await _adminService.UpdateTicket(ticketId, message, adminId, isClientMessage);
+        }
     }
 }
