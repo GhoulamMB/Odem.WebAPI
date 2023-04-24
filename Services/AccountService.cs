@@ -15,6 +15,9 @@ public class AccountService : IAccountService
 
     public Task<bool> Register(UserRequest request)
     {
+        if(_context.Clients?.Any(c => c.Email == request.Email) ?? false)
+            return Task.FromResult(false);
+        
         var client = new Client()
         {
             FirstName = request.FirstName,

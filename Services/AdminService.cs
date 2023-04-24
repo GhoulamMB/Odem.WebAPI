@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
@@ -61,24 +62,21 @@ public class AdminService : IAdminService
 
     public Task<bool> DeleteClient(string email)
     {
-        var tmp = _context.Clients.Remove(_context.Clients.First(c => c.Email == email));
+        var client = _context.Clients?.First(c => c.Email == email);
+        _context.Clients.Remove(client);
         _context.SaveChanges();
-        if (tmp.Entity is null)
-        {
-            return Task.FromResult(false);
-        }
         return Task.FromResult(true);
     }
 
     public Task<bool> UpdateClient(UserRequest client)
     {
-        var existingClient = _context.Clients.SingleOrDefault(c => c.Email == client.Email);
+        var existingClient = _context.Clients?.SingleOrDefault(c => c.Email == client.Email);
         if (existingClient == null) return Task.FromResult(false);
 
         var requestClient = _mapper.Map<Client>(client);
         requestClient.Address = _mapper.Map<Address>(client.Address);
-        _context.Clients.Remove(existingClient);
-        _context.Clients.Add(requestClient);
+        _context.Clients?.Remove(existingClient);
+        _context.Clients?.Add(requestClient);
         
 
 
@@ -86,9 +84,9 @@ public class AdminService : IAdminService
         return Task.FromResult(true);
     }
 
-    public Task<Ticket> CreateTicket(string message, string userId, string adminId)
+    public Task<Ticket> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage)
     {
-        var client = _context.Clients.First(c=>c.Uid == userId);
+        var client = _context.Clients.First(c=>c.Email == userEmail);
         var admin = _context.Admins.First(c=>c.Uid == adminId);
         if (client is null) return null!;
         var ticket = new Ticket
@@ -99,7 +97,7 @@ public class AdminService : IAdminService
                 new()
                 {
                     Content = message,
-                    isClientMessage = true
+                    isClientMessage = isClientMessage
                 }
             },
             HandledBy = admin
@@ -142,8 +140,31 @@ public class AdminService : IAdminService
         ticket.Messages.Add(new Message
         {
             Content = message,
-            isClientMessage = isClientMessage
+            isClientMessage = isClientMessage,
+            Timestamp = DateTime.Now
         });
+        _context.SaveChanges();
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> UpdateTicketStatus(string ticketId, bool close)
+    {
+        var ticket = _context.Tickets?
+            .Include(t => t.CreatedBy)
+            .Include(t => t.HandledBy)
+            .Include(m=>m.Messages)
+            .First(t => t.Id == ticketId);
+        if (ticket is null) return Task.FromResult(false);
+        if (close)
+        {
+            ticket.Status = Status.Closed;
+            ticket.CloseDate = DateTime.Now;
+        }
+        else
+        {
+            ticket.Status = Status.Open;
+            ticket.CloseDate = DateTime.MinValue;
+        }
         _context.SaveChanges();
         return Task.FromResult(true);
     }

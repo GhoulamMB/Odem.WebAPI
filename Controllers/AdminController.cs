@@ -54,9 +54,9 @@ namespace Odem.WebAPI.Controllers
         }
         
         [HttpPost("createticket")]
-        public async Task<Ticket> CreateTicket(string message, string userId, string adminId)
+        public async Task<Ticket> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage=false)
         {
-            return await _adminService.CreateTicket(message, userId, adminId);
+            return await _adminService.CreateTicket(message, userEmail, adminId, isClientMessage);
         }
         
         [HttpGet("tickets")]
@@ -75,6 +75,12 @@ namespace Odem.WebAPI.Controllers
         public async Task<bool> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage=true)
         {
             return await _adminService.UpdateTicket(ticketId, message, adminId, isClientMessage);
+        }
+        
+        [HttpPut("updateticketstatus")]
+        public async Task<bool> UpdateTicketStatus(string ticketId, bool close)
+        {
+            return await _adminService.UpdateTicketStatus(ticketId, close);
         }
     }
 }
