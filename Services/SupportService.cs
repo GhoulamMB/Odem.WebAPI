@@ -23,8 +23,8 @@ public class SupportService : ISupportService
     }
     public Task<TicketResponse> CreateTicket(string message, string userId, string adminId)
     {
-        var client = _context.Clients.First(c=>c.Uid == userId);
-        var admin = _context.Admins.First(c=>c.Uid == adminId);
+        var client = _context?.Clients!.First(c=>c.Uid == userId);
+        var admin = _context?.Admins!.First(c=>c.Uid == adminId);
         if (client is null) return null!;
         var ticket = new Ticket
         {
@@ -37,17 +37,17 @@ public class SupportService : ISupportService
                     isClientMessage = true
                 }
             },
-            HandledBy = admin
+            HandledBy = admin!
         };
-        _context.Tickets.Add(ticket);
-        _context.SaveChanges();
+        _context?.Tickets!.Add(ticket);
+        _context!.SaveChanges();
         var response = _mapper.Map(ticket, new TicketResponse());
         return Task.FromResult(response);
     }
 
     public Task<TicketResponse> GetTicket(string ticketId)
     {
-        var ticket = _context.Tickets?
+        var ticket = _context?.Tickets?
             .Include(t => t.CreatedBy)
             .Include(t => t.HandledBy)
             .Include(m=>m.Messages)
@@ -58,7 +58,7 @@ public class SupportService : ISupportService
 
     public Task<List<TicketResponse>> GetTickets()
     {
-        var tickets = _context.Tickets?
+        var tickets = _context?.Tickets?
             .Include(t => t.CreatedBy)
             .Include(t => t.HandledBy)
             .Include(m=>m.Messages)

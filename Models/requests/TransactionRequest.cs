@@ -3,6 +3,6 @@
 public class TransactionRequest
 {
     public required double Amount { get; init; }
-    public required string FromWalletId { get; init; }
-    public required string ToWalletId { get; init; }
+    public required string FromEmail { get; init; }
+    public required string ToEmail { get; init; }
 }

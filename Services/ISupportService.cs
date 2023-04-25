@@ -1,5 +1,4 @@
-﻿using Odem.WebAPI.Models;
-using Odem.WebAPI.Models.response;
+﻿using Odem.WebAPI.Models.response;
 
 namespace Odem.WebAPI.Services;
 

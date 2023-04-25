@@ -17,14 +17,17 @@ public class AuthenticationService : IAuthenticationService
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<Ticket, TicketResponse>();
+            cfg.CreateMap<Wallet, WalletResponse>();
+            cfg.CreateMap<OdemTransfer, TransactionResponse>();
         });
         _mapper = mapperConfiguration.CreateMapper();
     }
-    
+
     public Task<Client?> FindUserByEmail(string email)
     {
         var client = _context.Clients?
             .Include(c => c.Wallet)
+            .Include(c=>c.Wallet.Transactions)
             .Include(c => c.Address)
             .Include(c => c.Tickets);
 
@@ -46,22 +49,19 @@ public class AuthenticationService : IAuthenticationService
             Password = client.Password,
             Phone = client.Phone,
             Uid = client.Uid,
-            Wallet = client.Wallet,
+            Wallet = _mapper.Map<WalletResponse>(client.Wallet),
             Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets)
         };
         return Task.FromResult(result);
     }
 
-    public async Task<bool> ChangePassword(string email,string password)
+    public Task<bool> ChangePassword(string email,string password)
     {
         var client = FindUserByEmail(email).Result;
-        if (client is not null)
-        {
-            client.Password = Crypto.EncryptBcrypt(password);
-            _context.Clients?.Update(client);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        return false;
+        if (client is null) return Task.FromResult(false);
+        client.Password = Crypto.EncryptBcrypt(password);
+        _context.Clients?.Update(client);
+        _context.SaveChanges();
+        return Task.FromResult(true);
     }
 }

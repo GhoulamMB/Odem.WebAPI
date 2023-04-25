@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
@@ -26,7 +25,7 @@ public class AdminService : IAdminService
 
     public Task<Admin> FindAdmin(string email)
     {
-        var admin = _context.Admins
+        var admin = _context.Admins!
             .Include(a => a.HandledTickets)
             .Include(adr=>adr.Address)
             .First(a => a.Email == email);
@@ -42,7 +41,7 @@ public class AdminService : IAdminService
 
     public Task<List<OdemTransfer>> GetTransactions()
     {
-        var transactions = _context.OdemTransfers.Include(o=>o.From).Include(o=>o.To).ToList();
+        var transactions = _context.OdemTransfers!.Include(o=>o.From).Include(o=>o.To).ToList();
         return Task.FromResult(transactions);
     }
 
@@ -50,20 +49,26 @@ public class AdminService : IAdminService
     {
         var newAdmin = _mapper.Map<Admin>(admin);
         newAdmin.Password = Crypto.EncryptBcrypt(admin.Password);
-        _context.Admins.Add(newAdmin);
+        _context.Admins!.Add(newAdmin);
         _context.SaveChanges();
         return Task.FromResult(true);
     }
 
     public Task<List<Client>> GetClients()
     {
-        return Task.FromResult(_context.Clients.Include(c=>c.Address).Include(c=>c.Wallet).ToList());
+        var clients = Task.FromResult(_context!.Clients!
+            .Include(c => c.Address)
+            .Include(c => c.Wallet)
+            .Include(c => c.Wallet.Transactions)
+            .Include(c => c.Tickets)
+            .ToList());
+        return clients;
     }
 
     public Task<bool> DeleteClient(string email)
     {
         var client = _context.Clients?.First(c => c.Email == email);
-        _context.Clients.Remove(client);
+        _context.Clients!.Remove(client!);
         _context.SaveChanges();
         return Task.FromResult(true);
     }
@@ -86,8 +91,8 @@ public class AdminService : IAdminService
 
     public Task<Ticket> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage)
     {
-        var client = _context.Clients.First(c=>c.Email == userEmail);
-        var admin = _context.Admins.First(c=>c.Uid == adminId);
+        var client = _context?.Clients!.First(c=>c.Email == userEmail);
+        var admin = _context?.Admins!.First(c=>c.Uid == adminId);
         if (client is null) return null!;
         var ticket = new Ticket
         {
@@ -100,10 +105,10 @@ public class AdminService : IAdminService
                     isClientMessage = isClientMessage
                 }
             },
-            HandledBy = admin
+            HandledBy = admin!
         };
-        _context.Tickets.Add(ticket);
-        _context.SaveChanges();
+        _context?.Tickets!.Add(ticket);
+        _context!.SaveChanges();
         return Task.FromResult(ticket);
     }
 
@@ -114,7 +119,7 @@ public class AdminService : IAdminService
             .Include(t => t.HandledBy)
             .Include(m=>m.Messages)
             .First(t => t.Id == ticketId);
-        return Task.FromResult(ticket);
+        return Task.FromResult(ticket)!;
     }
 
     public Task<List<Ticket>> GetTickets()
@@ -124,7 +129,7 @@ public class AdminService : IAdminService
             .Include(t => t.HandledBy)
             .Include(m=>m.Messages)
             .ToList();
-        return Task.FromResult(tickets);
+        return Task.FromResult(tickets)!;
     }
 
     public Task<bool> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage)

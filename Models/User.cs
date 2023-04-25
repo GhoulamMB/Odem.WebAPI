@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Odem.WebAPI.Models;
+﻿namespace Odem.WebAPI.Models;
 
 
 public abstract class User
