@@ -7,5 +7,5 @@ public class Wallet
 {
     public string Id { get;} = Guid.NewGuid().ToString();
     public double Balance { get; set; }
-    public List<Transaction> Transactions { get; set; } = new();
+    public List<OdemTransfer> Transactions { get; set; } = new();
 }

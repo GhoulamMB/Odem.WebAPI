@@ -12,19 +12,3 @@ public class ClientResponse
     public WalletResponse? Wallet { get; set; }
     public List<TicketResponse>? Tickets { get; set; }
 }
-
-public class WalletResponse
-{ 
-    public string? Id { get; init; }
-    public double Balance { get; set; }
-    public List<TransactionResponse>? Transactions { get; init; }
-}
-
-public class TransactionResponse
-{
-    public string? Id { get; init; }
-    public double Amount { get; init; }
-    public DateTime Date { get; init; }
-    public required TransactionType Type { get; init; }
-    public required string From { get; init; }
-}

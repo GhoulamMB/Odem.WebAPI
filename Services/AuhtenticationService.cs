@@ -18,7 +18,8 @@ public class AuthenticationService : IAuthenticationService
         {
             cfg.CreateMap<Ticket, TicketResponse>();
             cfg.CreateMap<Wallet, WalletResponse>();
-            cfg.CreateMap<OdemTransfer, TransactionResponse>();
+            cfg.CreateMap<OdemTransfer, OdemTransferResponse>();
+
         });
         _mapper = mapperConfiguration.CreateMapper();
     }
@@ -31,7 +32,15 @@ public class AuthenticationService : IAuthenticationService
             .Include(c => c.Address)
             .Include(c => c.Tickets);
 
-        return Task.FromResult(client?.First(c => c.Email == email));
+        var result = client?.First(c => c.Email == email);
+
+        result!.Wallet.Transactions = _context.OdemTransfers
+            .Include(t => t.From)
+            .Where(t=>t.From.Id != result.Wallet.Id)
+            .Include(t => t.To)
+            .ToList();
+
+        return Task.FromResult(result)!;
     }
 
     public Task<ClientResponse> Login(string email, string password)
@@ -52,6 +61,7 @@ public class AuthenticationService : IAuthenticationService
             Wallet = _mapper.Map<WalletResponse>(client.Wallet),
             Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets)
         };
+        _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
         return Task.FromResult(result);
     }
 

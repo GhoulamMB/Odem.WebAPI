@@ -11,7 +11,14 @@ public class DataContext : DbContext
     public DbSet<OdemTransfer>? OdemTransfers { get; set; }
     public DbSet<Ticket>? Tickets { get; set; }
     public DbSet<Wallet>? Wallets { get; set; }
-    
+
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Wallet>().HasMany<OdemTransfer>(w=>w.Transactions)
+            .WithOne(f=>f.From);
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
