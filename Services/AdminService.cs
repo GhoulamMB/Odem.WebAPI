@@ -83,6 +83,12 @@ public class AdminService : IAdminService
 
         var requestClient = _mapper.Map<Client>(client);
         requestClient.Address = _mapper.Map<Address>(client.Address);
+        if (client.Password != "")
+        {
+            requestClient.Password = Crypto.EncryptBcrypt(client.Password);
+        }
+        requestClient.Tickets = existingClient.Tickets;
+        requestClient.Wallet = existingClient.Wallet;
         _context.Clients?.Remove(existingClient);
         _context.Clients?.Add(requestClient);
         
