@@ -76,24 +76,23 @@ public class AdminService : IAdminService
         return Task.FromResult(true);
     }
 
-    public Task<bool> UpdateClient(UserRequest client)
+    public Task<bool> UpdateClient(UserRequestAdmin client)
     {
-        var existingClient = _context.Clients?.SingleOrDefault(c => c.Email == client.Email);
+        var existingClient = _context.Clients?.Include(c=>c.Address).SingleOrDefault(c => c.Email == client.Email);
         if (existingClient == null) return Task.FromResult(false);
 
-        var requestClient = _mapper.Map<Client>(client);
-        requestClient.Address = _mapper.Map<Address>(client.Address);
-        if (client.Password != "")
-        {
-            requestClient.Password = Crypto.EncryptBcrypt(client.Password);
-        }
-        requestClient.Tickets = existingClient.Tickets;
-        requestClient.Wallet = existingClient.Wallet;
-        _context.Clients?.Remove(existingClient);
-        _context.Clients?.Add(requestClient);
+        existingClient.FirstName = client.FirstName;
+        existingClient.LastName = client.LastName;
+        existingClient.Email = client.Email;
+        existingClient.Phone = client.Phone;
+        existingClient.Address.Street = client.Address.Street;
+        existingClient.Address.City = client.Address.City;
+        existingClient.Address.ZipCode = client.Address.ZipCode;
+        if(client.Password != null)
+            existingClient.Password = Crypto.EncryptBcrypt(client.Password);
         
-
-
+        _context.Clients!.Update(existingClient);
+        
         _context.SaveChanges();
         return Task.FromResult(true);
     }

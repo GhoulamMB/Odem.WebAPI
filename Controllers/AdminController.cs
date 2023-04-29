@@ -47,7 +47,7 @@ namespace Odem.WebAPI.Controllers
         }
         
         [HttpPut("update")]
-        public async Task<bool> UpdateClient(UserRequest client)
+        public async Task<bool> UpdateClient(UserRequestAdmin client)
         {
             return await _adminService.UpdateClient(client);
         }
