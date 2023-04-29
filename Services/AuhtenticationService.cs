@@ -36,7 +36,7 @@ public class AuthenticationService : IAuthenticationService
 
         result!.Wallet.Transactions = _context.OdemTransfers
             .Include(t => t.From)
-            .Where(t=>t.From.Id != result.Wallet.Id)
+            .Where(t=>t.From.Id == result.Wallet.Id)
             .Include(t => t.To)
             .ToList();
 
@@ -46,8 +46,11 @@ public class AuthenticationService : IAuthenticationService
     public Task<ClientResponse> Login(string email, string password)
     {
         var client = FindUserByEmail(email).Result;
-        
-        if (client is null || !Crypto.CompareBcrypt(password, client.Password)) return null!;
+
+        if (client is null || !Crypto.CompareBcrypt(password, client.Password))
+        {
+            return null!;
+        }
         
         var result = new ClientResponse()
         {
