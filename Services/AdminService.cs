@@ -85,12 +85,7 @@ public class AdminService : IAdminService
         existingClient.LastName = client.LastName;
         existingClient.Email = client.Email;
         existingClient.Phone = client.Phone;
-        existingClient.Address.Street = client.Address.Street;
-        existingClient.Address.City = client.Address.City;
-        existingClient.Address.ZipCode = client.Address.ZipCode;
-        if(client.Password != null)
-            existingClient.Password = Crypto.EncryptBcrypt(client.Password);
-        
+
         _context.Clients!.Update(existingClient);
         
         _context.SaveChanges();

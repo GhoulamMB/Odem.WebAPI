@@ -16,9 +16,14 @@ public class AuthenticationService : IAuthenticationService
         _context = new();
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<Ticket, TicketResponse>();
-            cfg.CreateMap<Wallet, WalletResponse>();
+            cfg.CreateMap<Ticket, TicketResponse>()
+                .ForMember(dest => dest.Messages,
+                    opt => opt.MapFrom(src => src.Messages))
+                .ForMember(dest => dest.HandledBy,
+                    opt => opt.MapFrom(src => src.HandledBy.FirstName));
+                cfg.CreateMap<Wallet, WalletResponse>();
             cfg.CreateMap<OdemTransfer, OdemTransferResponse>();
+            cfg.CreateMap<Message, MessageResponse>();
 
         });
         _mapper = mapperConfiguration.CreateMapper();
@@ -28,9 +33,12 @@ public class AuthenticationService : IAuthenticationService
     {
         var client = _context.Clients?
             .Include(c => c.Wallet)
-            .Include(c=>c.Wallet.Transactions)
+            .ThenInclude(w => w.Transactions)
             .Include(c => c.Address)
-            .Include(c => c.Tickets);
+            .Include(c => c.Tickets)
+            .ThenInclude(m => m.HandledBy)
+            .Include(msg => msg.Tickets)
+            .ThenInclude(msg => msg.Messages);
 
         var result = client?.First(c => c.Email == email);
 
