@@ -22,14 +22,20 @@ public class SupportController : ControllerBase
     }
     
     [HttpGet("tickets")]
-    public async Task<List<TicketResponse>> GetTickets()
+    public async Task<List<TicketResponse>> GetTickets(string userId)
     {
-        return await _supportService.GetTickets();
+        return await _supportService.GetTickets(userId);
     }
     
     [HttpPost("createticket")]
-    public async Task<TicketResponse> CreateTicket(string message, string userId, string adminId)
+    public async Task<TicketResponse> CreateTicket(string message, string userId)
     {
-        return await _supportService.CreateTicket(message, userId, adminId);
+        return await _supportService.CreateTicket(message, userId);
+    }
+    
+    [HttpPut("updateticket")]
+    public async Task<bool> UpdateTicket(string ticketId, string message)
+    {
+        return await _supportService.UpdateTicket(ticketId, message);
     }
 }
