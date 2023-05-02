@@ -34,7 +34,7 @@ public class SupportController : ControllerBase
     }
     
     [HttpPut("updateticket")]
-    public async Task<bool> UpdateTicket(string ticketId, string message)
+    public async Task<MessageResponse> UpdateTicket(string ticketId, string message)
     {
         return await _supportService.UpdateTicket(ticketId, message);
     }

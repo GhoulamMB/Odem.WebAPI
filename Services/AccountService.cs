@@ -31,4 +31,23 @@ public class AccountService : IAccountService
         _context.SaveChanges();
         return Task.FromResult(true);
     }
+
+    public Task<bool> ChangeInformation(string userId,string email = null, string password = null)
+    {
+        var client = _context.Clients.First(c => c.Uid == userId);
+        
+        if (email is not null)
+        {
+            client.Email = email;
+            _context.SaveChanges();
+            return Task.FromResult(true);
+        }
+        if (password is not null)
+        {
+            client.Password = Crypto.EncryptBcrypt(password);
+            _context.SaveChanges();
+            return Task.FromResult(true);
+        }
+        return Task.FromResult(false);
+    }
 }

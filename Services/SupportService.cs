@@ -76,7 +76,7 @@ public class SupportService : ISupportService
         return Task.FromResult(result);
     }
 
-    public Task<bool> UpdateTicket(string ticketId, string message)
+    public Task<MessageResponse> UpdateTicket(string ticketId, string message)
     {
         var ticket = _context.Tickets?.First(t => t.Id == "a73c7afc-7a41-49a2-8f9b-24700beb5aed");
         var messageReq = new Message()
@@ -85,9 +85,9 @@ public class SupportService : ISupportService
             isClientMessage = true,
             Timestamp = DateTime.Now
         };
-        if (ticket is null) return Task.FromResult(false);
+        if (ticket is null) return null;
         ticket.Messages.Add(messageReq);
         _context.SaveChanges();
-        return Task.FromResult(true);
+        return Task.FromResult(_mapper.Map<MessageResponse>(messageReq));
     }
 }

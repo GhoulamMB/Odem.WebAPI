@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
+using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
 
 namespace Odem.WebAPI.Controllers
@@ -19,6 +21,12 @@ namespace Odem.WebAPI.Controllers
         {
             _transactionService.CreateTransaction(transaction);
             return Ok();
+        }
+
+        [HttpGet]
+        public Task<List<OdemTransferResponse>> GetTransactions(string userId)
+        {
+           return _transactionService.GetTransactions(userId);
         }
     }
 }

@@ -1,16 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
+using Odem.WebAPI.Models.response;
 
 namespace Odem.WebAPI.Services;
 
 public class TransactionService : ITransactionService
 {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
 
     public TransactionService()
     {
         _context = new();
+        var mapperConfiguration = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<OdemTransfer, OdemTransferResponse>();
+        });
+        _mapper = mapperConfiguration.CreateMapper();
     }
     public Task CreateTransaction(TransactionRequest transaction)
     {
@@ -52,5 +60,16 @@ public class TransactionService : ITransactionService
         
         _context.SaveChanges();
         return Task.CompletedTask;
+    }
+
+    public Task<List<OdemTransferResponse>> GetTransactions(string userId)
+    {
+        var client = _context.Clients
+            .Include(c => c.Wallet)
+            .Include(t => t.Wallet.Transactions)
+            .First(c => c.Uid == userId);
+
+        var response = _mapper.Map<List<OdemTransferResponse>>(client.Wallet.Transactions);
+        return Task.FromResult(response);
     }
 }
