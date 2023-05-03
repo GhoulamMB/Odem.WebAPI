@@ -23,6 +23,8 @@ public class DataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer("Server=85.215.99.211;User ID=sa;Password=153759759mM;Database=Odemdb;TrustServerCertificate=True;Trusted_Connection=True;Integrated Security=false;");
+        optionsBuilder.UseSqlServer("Server=85.215.99.211;User ID=sa;Password=153759759mM;Database=Odemdb;TrustServerCertificate=True;Trusted_Connection=True;Integrated Security=false;"
+            ,so=>so.EnableRetryOnFailure()
+            );
     }
 }
