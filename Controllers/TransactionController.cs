@@ -17,16 +17,33 @@ namespace Odem.WebAPI.Controllers
         }
         
         [HttpPost]
-        public IActionResult CreateTransaction([FromBody] TransactionRequest transaction)
+        public Task CreateTransaction([FromBody] TransactionRequest transaction)
         {
-            _transactionService.CreateTransaction(transaction);
-            return Ok();
+            return _transactionService.CreateTransaction(transaction);
         }
 
         [HttpGet]
-        public Task<List<OdemTransferResponse>> GetTransactions(string userId)
+        public async Task<List<OdemTransferResponse>> GetTransactions(string userId)
         {
-           return _transactionService.GetTransactions(userId);
+           return await _transactionService.GetTransactions(userId);
+        }
+
+        [HttpPost("TransferRequest")]
+        public async Task<TransferRequest> CreateTransferRequest(string from, string to, double amount, string reason)
+        {
+            return await _transactionService.CreateTransferRequest(from, to, amount, reason);
+        }
+        
+        [HttpPost("AcceptTransferRequest")]
+        public async Task<bool> AcceptTransferRequest(string Id)
+        {
+            return await _transactionService.AcceptTransferRequest(Id);
+        }
+        
+        [HttpPost("DeclineTransferRequest")]
+        public async Task<bool> DeclineTransferRequest(string Id)
+        {
+            return await _transactionService.DeclineTransferRequest(Id);
         }
     }
 }

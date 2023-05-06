@@ -10,9 +10,11 @@ public class AuthenticationService : IAuthenticationService
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
+    private readonly TokenService _tokenService;
 
-    public AuthenticationService()
+    public AuthenticationService(TokenService tokenService)
     {
+        _tokenService = tokenService;
         _context = new();
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
@@ -38,9 +40,33 @@ public class AuthenticationService : IAuthenticationService
             .Include(c => c.Tickets)
             .ThenInclude(m => m.HandledBy)
             .Include(msg => msg.Tickets)
-            .ThenInclude(msg => msg.Messages);
+            .ThenInclude(msg => msg.Messages)
+            .Include(r => r.RecievedRequests)
+            .Include(r => r.SentRequests);
 
         var result = client?.First(c => c.Email == email);
+
+        result!.Wallet.Transactions = _context.OdemTransfers
+            .Include(t => t.From)
+            .Where(t=>t.From.Id == result.Wallet.Id)
+            .Include(t => t.To)
+            .ToList();
+
+        return Task.FromResult(result)!;
+    }
+    
+    private Task<Client?> FindUserById(string userId)
+    {
+        var client = _context.Clients?
+            .Include(c => c.Wallet)
+            .ThenInclude(w => w.Transactions)
+            .Include(c => c.Address)
+            .Include(c => c.Tickets)
+            .ThenInclude(m => m.HandledBy)
+            .Include(msg => msg.Tickets)
+            .ThenInclude(msg => msg.Messages);
+
+        var result = client?.First(c => c.Uid == userId);
 
         result!.Wallet.Transactions = _context.OdemTransfers
             .Include(t => t.From)
@@ -66,12 +92,36 @@ public class AuthenticationService : IAuthenticationService
             LastName = client.LastName,
             Address = client.Address,
             Email = client.Email,
-            Password = client.Password,
+            Phone = client.Phone,
+            Uid = client.Uid,
+            Wallet = _mapper.Map<WalletResponse>(client.Wallet),
+            Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets),
+            RecievedRequests = client.RecievedRequests,
+            SentRequests = client.SentRequests
+        };
+        var token = _tokenService.RegisterToken(result.Uid);
+        result.Token = token;
+        _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
+        return Task.FromResult(result);
+    }
+
+    public Task<ClientResponse> LoginWithToken(string token)
+    {
+        var userId = _tokenService.RetrieveClientId(token);
+        var client = FindUserById(userId.Result).Result;
+
+        var result = new ClientResponse()
+        {
+            FirstName = client.FirstName,
+            LastName = client.LastName,
+            Address = client.Address,
+            Email = client.Email,
             Phone = client.Phone,
             Uid = client.Uid,
             Wallet = _mapper.Map<WalletResponse>(client.Wallet),
             Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets)
         };
+        result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
         return Task.FromResult(result);
     }

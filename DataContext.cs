@@ -11,19 +11,21 @@ public class DataContext : DbContext
     public DbSet<OdemTransfer>? OdemTransfers { get; set; }
     public DbSet<Ticket>? Tickets { get; set; }
     public DbSet<Wallet>? Wallets { get; set; }
+    public DbSet<TransferRequest>? TransferRequests { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Wallet>().HasMany<OdemTransfer>(w=>w.Transactions)
+        modelBuilder.Entity<Wallet>()
+            .HasMany<OdemTransfer>(w=>w.Transactions)
             .WithOne(f=>f.From);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseSqlServer("Server=85.215.99.211;User ID=sa;Password=153759759mM;Database=Odemdb;TrustServerCertificate=True;Trusted_Connection=True;Integrated Security=false;"
+        optionsBuilder.UseSqlServer("Server=85.215.99.211;User ID=sa;Password=153759759mM;Database=OdemdbDev;TrustServerCertificate=True;Trusted_Connection=True;Integrated Security=false;"
             ,so=>so.EnableRetryOnFailure()
             );
     }

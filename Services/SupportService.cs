@@ -54,7 +54,7 @@ public class SupportService : ISupportService
 
     public Task<TicketResponse> GetTicket(string ticketId)
     {
-        var ticket = _context?.Tickets?
+        var ticket = _context.Tickets?
             .Include(t => t.CreatedBy)
             .Include(t => t.HandledBy)
             .Include(m=>m.Messages)
@@ -65,7 +65,7 @@ public class SupportService : ISupportService
 
     public Task<List<TicketResponse>> GetTickets(string userId)
     {
-        var request = _context?.Tickets
+        var request = _context.Tickets?
             .Include(t => t.HandledBy)
             .Include(t => t.CreatedBy)
             .Include(t => t.Messages)
@@ -78,14 +78,14 @@ public class SupportService : ISupportService
 
     public Task<MessageResponse> UpdateTicket(string ticketId, string message)
     {
-        var ticket = _context.Tickets?.First(t => t.Id == "a73c7afc-7a41-49a2-8f9b-24700beb5aed");
-        var messageReq = new Message()
+        var ticket = _context.Tickets?.First(t => t.Id == ticketId);
+        var messageReq = new Message
         {
             Content = message,
             isClientMessage = true,
             Timestamp = DateTime.Now
         };
-        if (ticket is null) return null;
+        if (ticket is null) return null!;
         ticket.Messages.Add(messageReq);
         _context.SaveChanges();
         return Task.FromResult(_mapper.Map<MessageResponse>(messageReq));

@@ -6,5 +6,5 @@ namespace Odem.WebAPI.Services;
 public interface IAccountService
 {
     Task<bool> Register(UserRequest request);
-    Task<bool> ChangeInformation(string userId,string email = null, string password = null);
+    Task<bool> ChangeInformation(string userId,string email = null!, string password = null!);
 }

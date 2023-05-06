@@ -8,6 +8,9 @@ public class Client:User
     public ClientStatus Status { get; set; } = ClientStatus.Active;
     public Wallet Wallet { get; set; } = new();
     public List<Ticket> Tickets { get; set; } = new();
+    public List<TransferRequest> RecievedRequests { get; set; } = new();
+    
+    public List<TransferRequest> SentRequests { get; set; } = new();
 }
 
 public enum ClientStatus

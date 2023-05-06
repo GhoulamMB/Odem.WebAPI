@@ -2,23 +2,30 @@ using Microsoft.AspNetCore.Mvc;
 using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
 
-namespace Odem.WebAPI.Controllers
+namespace Odem.WebAPI.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class LoginController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LoginController : ControllerBase
+    private readonly IAuthenticationService _authenticationService;
+    private readonly TokenService _tokenService;
+
+    public LoginController(IAuthenticationService authenticationService, TokenService tokenService)
     {
-        private readonly IAuthenticationService _authenticationService;
+        _authenticationService = authenticationService;
+        _tokenService = tokenService;
+    }
 
-        public LoginController(IAuthenticationService authenticationService)
-        {
-            _authenticationService = authenticationService;
-        }
-
-        [HttpGet("login")]
-        public async Task<ClientResponse?> Login(string email,string password)
-        {
-            return await _authenticationService.Login(email, password);
-        }
+    [HttpGet("login")]
+    public async Task<ClientResponse?> Login(string email,string password)
+    {
+        return await _authenticationService.Login(email, password);
+    }
+    
+    [HttpGet("loginwithtoken")]
+    public async Task<ClientResponse?> LoginWithToken(string token)
+    {
+        return await _authenticationService.LoginWithToken(token);
     }
 }

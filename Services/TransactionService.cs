@@ -64,12 +64,62 @@ public class TransactionService : ITransactionService
 
     public Task<List<OdemTransferResponse>> GetTransactions(string userId)
     {
-        var client = _context.Clients
+        var client = _context.Clients?
             .Include(c => c.Wallet)
             .Include(t => t.Wallet.Transactions)
             .First(c => c.Uid == userId);
 
-        var response = _mapper.Map<List<OdemTransferResponse>>(client.Wallet.Transactions);
+        var response = _mapper.Map<List<OdemTransferResponse>>(client?.Wallet.Transactions);
         return Task.FromResult(response);
+    }
+
+    public Task<TransferRequest> CreateTransferRequest(string from,string to,double amount,string reason)
+    {
+        var clientFrom = _context.Clients?.First(c => c.Email == from);
+        var clientTo = _context.Clients?.First(c => c.Email == to);
+        if (clientFrom is null || clientTo is null) return null!;
+
+        var request = new TransferRequest()
+        {
+            Amount = amount,
+            From = from,
+            To = to,
+            Checked = false,
+            Reason = reason
+        };
+        _context.TransferRequests?.Add(request);
+        clientFrom.SentRequests.Add(request);
+        clientTo.RecievedRequests.Add(request);
+        _context.Clients?.Update(clientFrom);
+        _context.Clients?.Update(clientTo);
+        _context.SaveChanges();
+        return Task.FromResult(request);
+    }
+
+    public Task<bool> AcceptTransferRequest(string Id)
+    {
+        var request = _context.TransferRequests?.First(r => r.Id == Id);
+        if (request is null) return Task.FromResult(false);
+        request.Checked = true;
+        _context.TransferRequests?.Update(request);
+        _context.SaveChanges();
+        var transaction = new TransactionRequest()
+        {
+            Amount = request.Amount,
+            FromEmail = request.To,
+            ToEmail = request.From
+        };
+        CreateTransaction(transaction);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> DeclineTransferRequest(string Id)
+    {
+        var request = _context.TransferRequests?.First(r => r.Id == Id);
+        if (request is null) return Task.FromResult(false);
+        request.Checked = true;
+        _context.TransferRequests?.Update(request);
+        _context.SaveChanges();
+        return Task.FromResult(true);
     }
 }
