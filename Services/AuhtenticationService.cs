@@ -46,7 +46,7 @@ public class AuthenticationService : IAuthenticationService
 
         var result = client?.First(c => c.Email == email);
 
-        result!.Wallet.Transactions = _context.OdemTransfers
+        result!.Wallet.Transactions = _context.OdemTransfers!
             .Include(t => t.From)
             .Where(t=>t.From.Id == result.Wallet.Id)
             .Include(t => t.To)
@@ -68,7 +68,7 @@ public class AuthenticationService : IAuthenticationService
 
         var result = client?.First(c => c.Uid == userId);
 
-        result!.Wallet.Transactions = _context.OdemTransfers
+        result!.Wallet.Transactions = _context.OdemTransfers!
             .Include(t => t.From)
             .Where(t=>t.From.Id == result.Wallet.Id)
             .Include(t => t.To)
@@ -112,7 +112,7 @@ public class AuthenticationService : IAuthenticationService
 
         var result = new ClientResponse()
         {
-            FirstName = client.FirstName,
+            FirstName = client!.FirstName,
             LastName = client.LastName,
             Address = client.Address,
             Email = client.Email,

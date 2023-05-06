@@ -71,7 +71,7 @@ public class AdminService : IAdminService
     public Task<bool> DeleteClient(string email)
     {
         var client = _context.Clients?.First(c => c.Email == email);
-        _context.Clients!.Remove(client);
+        _context.Clients!.Remove(client!);
         _context.SaveChanges();
         return Task.FromResult(true);
     }

@@ -20,14 +20,14 @@ namespace Odem.WebAPI.Controllers
         }
         
         [HttpPut]
-        public async Task<bool> ChangeInformation(string userId, string email = null, string password = null)
+        public Task<bool> ChangeInformation(string userId, string email = null!, string password = null!)
         {
             if (_accountService.ChangeInformation(userId, email, password).Result)
             {
-                return true;
+                return Task.FromResult(true);
             }
 
-            return false;
+            return Task.FromResult(false);
         }
     }
 }

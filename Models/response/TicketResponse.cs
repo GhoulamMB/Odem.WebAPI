@@ -7,5 +7,5 @@ public class TicketResponse
     public Status Status { get; init; }
     public DateTime CloseDate { get; init; }
     public string? HandledBy { get; init; }
-    public List<MessageResponse> Messages { get; set; }
+    public List<MessageResponse>? Messages { get; set; }
 }
