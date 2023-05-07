@@ -20,22 +20,26 @@ public class TransactionService : ITransactionService
         });
         _mapper = mapperConfiguration.CreateMapper();
     }
-    public Task CreateTransaction(TransactionRequest transaction)
+    public Task<bool> CreateTransaction(TransactionRequest transaction)
     {
         var fromClient = _context.Clients?.Include(c => c.Wallet).First(c => c.Email == transaction.FromEmail);
         var toClient = _context.Clients?.Include(c=>c.Wallet).First(c => c.Email == transaction.ToEmail);
-        var from = new OdemTransfer()
+        if (fromClient is null || toClient is null)
+        {
+            return Task.FromResult(false);
+        }
+        var from = new OdemTransfer
         {
             Amount = transaction.Amount,
-            From = fromClient!.Wallet,
+            From = fromClient.Wallet,
             FromName = $"{fromClient.FirstName} {fromClient.LastName}",
-            To = toClient!.Wallet,
+            To = toClient.Wallet,
             Type = TransactionType.Outgoing
         };
         //Add transaction to database
         _context.OdemTransfers?.Add(from);
 
-        var To = new OdemTransfer()
+        var To = new OdemTransfer
         {
             Amount = transaction.Amount,
             From = toClient.Wallet,
@@ -59,7 +63,7 @@ public class TransactionService : ITransactionService
         
         
         _context.SaveChanges();
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
     public Task<List<OdemTransferResponse>> GetTransactions(string userId)

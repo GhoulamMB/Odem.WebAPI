@@ -59,7 +59,7 @@ public class AdminService : IAdminService
 
     public Task<List<Client>> GetClients()
     {
-        var clients = Task.FromResult(_context!.Clients!
+        var clients = Task.FromResult(_context.Clients!
             .Include(c => c.Address)
             .Include(c => c.Wallet)
             .Include(c => c.Wallet.Transactions)

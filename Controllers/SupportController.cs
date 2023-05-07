@@ -16,26 +16,46 @@ public class SupportController : ControllerBase
     }
     
     [HttpGet("ticket")]
-    public async Task<TicketResponse> GetTicket(string id)
+    public async Task<ActionResult> GetTicket(string id)
     {
-        return await _supportService.GetTicket(id);
+        var ticket = await _supportService.GetTicket(id);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+        return Ok(ticket);
     }
     
     [HttpGet("tickets")]
-    public async Task<List<TicketResponse>> GetTickets(string userId)
+    public async Task<ActionResult> GetTickets(string userId)
     {
-        return await _supportService.GetTickets(userId);
+        var tickets = await _supportService.GetTickets(userId);
+        if (tickets == null)
+        {
+            return NotFound();
+        }
+        return Ok(tickets);
     }
     
     [HttpPost("createticket")]
-    public async Task<TicketResponse> CreateTicket(string message, string userId)
+    public async Task<ActionResult> CreateTicket(string message, string userId)
     {
-        return await _supportService.CreateTicket(message, userId);
+        var ticket = await _supportService.CreateTicket(message, userId);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+        return Ok(ticket);
     }
     
     [HttpPut("updateticket")]
-    public async Task<MessageResponse> UpdateTicket(string ticketId, string message)
+    public async Task<ActionResult> UpdateTicket(string ticketId, string message)
     {
-        return await _supportService.UpdateTicket(ticketId, message);
+        var ticket = await _supportService.GetTicket(ticketId);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+        return Ok(ticket);
     }
 }

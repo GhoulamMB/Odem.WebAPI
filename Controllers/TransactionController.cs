@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
-using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
 
 namespace Odem.WebAPI.Controllers
@@ -17,33 +15,58 @@ namespace Odem.WebAPI.Controllers
         }
         
         [HttpPost]
-        public Task CreateTransaction([FromBody] TransactionRequest transaction)
+        public async Task<ActionResult> CreateTransaction([FromBody] TransactionRequest transaction)
         {
-            return _transactionService.CreateTransaction(transaction);
+            var result = await _transactionService.CreateTransaction(transaction);
+            if (result is false)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<List<OdemTransferResponse>> GetTransactions(string userId)
+        public async Task<ActionResult> GetTransactions(string userId)
         {
-           return await _transactionService.GetTransactions(userId);
+            var transactions = await _transactionService.GetTransactions(userId);
+            if (transactions is null)
+            {
+                return NotFound();
+            }
+            return Ok(transactions);
         }
 
         [HttpPost("TransferRequest")]
-        public async Task<TransferRequest> CreateTransferRequest(string from, string to, double amount, string reason)
+        public async Task<ActionResult> CreateTransferRequest(string from, string to, double amount, string reason)
         {
-            return await _transactionService.CreateTransferRequest(from, to, amount, reason);
+            var result = await _transactionService.CreateTransferRequest(from, to, amount, reason);
+            if (result is null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
         
         [HttpPost("AcceptTransferRequest")]
-        public async Task<bool> AcceptTransferRequest(string Id)
+        public async Task<ActionResult> AcceptTransferRequest(string Id)
         {
-            return await _transactionService.AcceptTransferRequest(Id);
+            var result = await _transactionService.AcceptTransferRequest(Id);
+            if (result is false)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
         
         [HttpPost("DeclineTransferRequest")]
-        public async Task<bool> DeclineTransferRequest(string Id)
+        public async Task<ActionResult> DeclineTransferRequest(string Id)
         {
-            return await _transactionService.DeclineTransferRequest(Id);
+            var result = await _transactionService.DeclineTransferRequest(Id);
+            if (result is false)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }

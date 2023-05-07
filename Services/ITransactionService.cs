@@ -6,7 +6,7 @@ namespace Odem.WebAPI.Services;
 
 public interface ITransactionService
 {
-    public Task CreateTransaction(TransactionRequest transaction);
+    public Task<bool> CreateTransaction(TransactionRequest transaction);
     public Task<List<OdemTransferResponse>> GetTransactions(string userId);
 
     public Task<TransferRequest> CreateTransferRequest(string from,string to,double amount,string reason);

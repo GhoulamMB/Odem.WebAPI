@@ -9,23 +9,29 @@ namespace Odem.WebAPI.Controllers;
 public class LoginController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
-    private readonly TokenService _tokenService;
 
-    public LoginController(IAuthenticationService authenticationService, TokenService tokenService)
+    public LoginController(IAuthenticationService authenticationService)
     {
         _authenticationService = authenticationService;
-        _tokenService = tokenService;
     }
 
     [HttpGet("login")]
-    public async Task<ClientResponse?> Login(string email,string password)
+    public async Task<IActionResult> Login(string email,string password)
     {
-        return await _authenticationService.Login(email, password);
+        
+        try
+        {
+            return Ok(await _authenticationService.Login(email, password));
+        }
+        catch (Exception)
+        {
+            return NotFound();
+        }
     }
     
     [HttpGet("loginwithtoken")]
-    public async Task<ClientResponse?> LoginWithToken(string token)
+    public async Task<ActionResult> LoginWithToken(string token)
     {
-        return await _authenticationService.LoginWithToken(token);
+        return Ok(await _authenticationService.LoginWithToken(token));
     }
 }

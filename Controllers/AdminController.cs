@@ -17,68 +17,98 @@ public class AdminController : ControllerBase
     }
         
     [HttpGet("login")]
-    public async Task<Admin> Login(string email,string password)
+    public async Task<ActionResult> Login(string email,string password)
     {
-        return await _adminService.Login(email, password);
+        var admin = await _adminService.Login(email, password);
+        if (admin == null)
+        {
+            return NotFound();
+        }
+        return Ok(admin);
     }
         
     [HttpGet("transactions")]
-    public async Task<List<OdemTransfer>> GetTransactions()
+    public async Task<ActionResult> GetTransactions()
     {
-        return await _adminService.GetTransactions();
+        var transactions = await _adminService.GetTransactions();
+        if (transactions == null)
+        {
+            return NotFound();
+        }
+        return Ok(transactions);
     }
         
     [HttpPost]
-    public async Task<bool> CreateAdmin(UserRequest admin)
+    public async Task<ActionResult> CreateAdmin(UserRequest admin)
     {
-        return await _adminService.CreateAdmin(admin);
+        return await _adminService.CreateAdmin(admin) ? Ok(true) : NotFound();
     }
         
     [HttpGet("clients")]
-    public async Task<List<Client>> GetClients()
+    public async Task<ActionResult> GetClients()
     {
-        return await _adminService.GetClients();
+        var clients = await _adminService.GetClients();
+        if (clients is null)
+        {
+            return NotFound();
+        }
+        return Ok(clients);
     }
         
     [HttpDelete]
-    public async Task<bool> DeleteClient(string email)
+    public async Task<ActionResult> DeleteClient(string email)
     {
-        return await _adminService.DeleteClient(email);
+        return await _adminService.DeleteClient(email) ? Ok(true) : NotFound();
     }
         
     [HttpPut("update")]
-    public async Task<bool> UpdateClient(UserRequestAdmin client)
+    public async Task<ActionResult> UpdateClient(UserRequestAdmin client)
     {
-        return await _adminService.UpdateClient(client);
+        return await _adminService.UpdateClient(client) ? Ok(true) : NotFound();
     }
         
     [HttpPost("createticket")]
-    public async Task<Ticket> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage=false)
+    public async Task<ActionResult> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage=false)
     {
-        return await _adminService.CreateTicket(message, userEmail, adminId, isClientMessage);
+        var ticket = await _adminService.CreateTicket(message, userEmail, adminId, isClientMessage);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+        return Ok(ticket);
     }
         
     [HttpGet("tickets")]
-    public async Task<List<Ticket>> GetTickets()
+    public async Task<ActionResult> GetTickets()
     {
-        return await _adminService.GetTickets();
+        var tickets = await _adminService.GetTickets();
+        if (tickets == null)
+        {
+            return NotFound();
+        }
+        return Ok(tickets);
     }
         
     [HttpGet("ticket")]
-    public async Task<Ticket> GetTicket(string ticketId)
+    public async Task<ActionResult> GetTicket(string ticketId)
     {
-        return await _adminService.GetTicket(ticketId);
+        var ticket = await _adminService.GetTicket(ticketId);
+        if (ticket == null)
+        {
+            return NotFound();
+        }
+        return Ok(ticket);
     }
         
     [HttpPut("updateticket")]
-    public async Task<bool> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage=true)
+    public async Task<ActionResult> UpdateTicket(string ticketId, string message, string adminId, bool isClientMessage=true)
     {
-        return await _adminService.UpdateTicket(ticketId, message, adminId, isClientMessage);
+        return await _adminService.UpdateTicket(ticketId, message, adminId, isClientMessage) ? Ok(true) : NotFound();
     }
         
     [HttpPut("updateticketstatus")]
-    public async Task<bool> UpdateTicketStatus(string ticketId, bool close)
+    public async Task<ActionResult> UpdateTicketStatus(string ticketId, bool close)
     {
-        return await _adminService.UpdateTicketStatus(ticketId, close);
+        return await _adminService.UpdateTicketStatus(ticketId, close) ? Ok(true) : NotFound();
     }
 }
