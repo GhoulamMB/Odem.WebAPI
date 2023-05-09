@@ -16,7 +16,7 @@ public class SupportController : ControllerBase
     }
     
     [HttpGet("ticket")]
-    public async Task<ActionResult> GetTicket(string id)
+    public async Task<ActionResult<TicketResponse>> GetTicket(string id)
     {
         var ticket = await _supportService.GetTicket(id);
         if (ticket == null)
@@ -27,7 +27,7 @@ public class SupportController : ControllerBase
     }
     
     [HttpGet("tickets")]
-    public async Task<ActionResult> GetTickets(string userId)
+    public async Task<ActionResult<List<TicketResponse>>> GetTickets(string userId)
     {
         var tickets = await _supportService.GetTickets(userId);
         if (tickets == null)
@@ -38,7 +38,7 @@ public class SupportController : ControllerBase
     }
     
     [HttpPost("createticket")]
-    public async Task<ActionResult> CreateTicket(string message, string userId)
+    public async Task<ActionResult<TicketResponse>> CreateTicket(string message, string userId)
     {
         var ticket = await _supportService.CreateTicket(message, userId);
         if (ticket == null)
@@ -49,7 +49,7 @@ public class SupportController : ControllerBase
     }
     
     [HttpPut("updateticket")]
-    public async Task<ActionResult> UpdateTicket(string ticketId, string message)
+    public async Task<ActionResult<TicketResponse>> UpdateTicket(string ticketId, string message)
     {
         var ticket = await _supportService.GetTicket(ticketId);
         if (ticket == null)

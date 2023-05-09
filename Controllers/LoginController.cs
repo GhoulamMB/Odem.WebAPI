@@ -16,7 +16,7 @@ public class LoginController : ControllerBase
     }
 
     [HttpGet("login")]
-    public async Task<IActionResult> Login(string email,string password)
+    public async Task<ActionResult<ClientResponse>> Login(string email,string password)
     {
         
         try
@@ -28,10 +28,10 @@ public class LoginController : ControllerBase
             return NotFound();
         }
     }
-    
+    /*
     [HttpGet("loginwithtoken")]
     public async Task<ActionResult> LoginWithToken(string token)
     {
         return Ok(await _authenticationService.LoginWithToken(token));
-    }
+    }*/
 }

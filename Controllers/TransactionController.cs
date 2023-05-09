@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
+using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
 
 namespace Odem.WebAPI.Controllers
@@ -26,7 +28,7 @@ namespace Odem.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetTransactions(string userId)
+        public async Task<ActionResult<List<OdemTransferResponse>>> GetTransactions(string userId)
         {
             var transactions = await _transactionService.GetTransactions(userId);
             if (transactions is null)
@@ -37,7 +39,7 @@ namespace Odem.WebAPI.Controllers
         }
 
         [HttpPost("TransferRequest")]
-        public async Task<ActionResult> CreateTransferRequest(string from, string to, double amount, string reason)
+        public async Task<ActionResult<TransferRequest>> CreateTransferRequest(string from, string to, double amount, string reason)
         {
             var result = await _transactionService.CreateTransferRequest(from, to, amount, reason);
             if (result is null)
@@ -48,7 +50,7 @@ namespace Odem.WebAPI.Controllers
         }
         
         [HttpPost("AcceptTransferRequest")]
-        public async Task<ActionResult> AcceptTransferRequest(string Id)
+        public async Task<ActionResult<bool>> AcceptTransferRequest(string Id)
         {
             var result = await _transactionService.AcceptTransferRequest(Id);
             if (result is false)

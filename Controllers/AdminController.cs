@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
+using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
 
 namespace Odem.WebAPI.Controllers;
@@ -17,7 +18,7 @@ public class AdminController : ControllerBase
     }
         
     [HttpGet("login")]
-    public async Task<ActionResult> Login(string email,string password)
+    public async Task<ActionResult<Admin>> Login(string email,string password)
     {
         var admin = await _adminService.Login(email, password);
         if (admin == null)
@@ -28,7 +29,7 @@ public class AdminController : ControllerBase
     }
         
     [HttpGet("transactions")]
-    public async Task<ActionResult> GetTransactions()
+    public async Task<ActionResult<OdemTransfer>> GetTransactions()
     {
         var transactions = await _adminService.GetTransactions();
         if (transactions == null)
@@ -45,7 +46,7 @@ public class AdminController : ControllerBase
     }
         
     [HttpGet("clients")]
-    public async Task<ActionResult> GetClients()
+    public async Task<ActionResult<List<Client>>> GetClients()
     {
         var clients = await _adminService.GetClients();
         if (clients is null)
@@ -68,7 +69,7 @@ public class AdminController : ControllerBase
     }
         
     [HttpPost("createticket")]
-    public async Task<ActionResult> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage=false)
+    public async Task<ActionResult<Ticket>> CreateTicket(string message, string userEmail, string adminId, bool isClientMessage=false)
     {
         var ticket = await _adminService.CreateTicket(message, userEmail, adminId, isClientMessage);
         if (ticket == null)
@@ -79,7 +80,7 @@ public class AdminController : ControllerBase
     }
         
     [HttpGet("tickets")]
-    public async Task<ActionResult> GetTickets()
+    public async Task<ActionResult<List<Ticket>>> GetTickets()
     {
         var tickets = await _adminService.GetTickets();
         if (tickets == null)
@@ -90,7 +91,7 @@ public class AdminController : ControllerBase
     }
         
     [HttpGet("ticket")]
-    public async Task<ActionResult> GetTicket(string ticketId)
+    public async Task<ActionResult<Ticket>> GetTicket(string ticketId)
     {
         var ticket = await _adminService.GetTicket(ticketId);
         if (ticket == null)
