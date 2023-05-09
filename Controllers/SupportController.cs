@@ -51,7 +51,7 @@ public class SupportController : ControllerBase
     [HttpPut("updateticket")]
     public async Task<ActionResult<TicketResponse>> UpdateTicket(string ticketId, string message)
     {
-        var ticket = await _supportService.GetTicket(ticketId);
+        var ticket = await _supportService.UpdateTicket(message, ticketId);
         if (ticket == null)
         {
             return NotFound();
