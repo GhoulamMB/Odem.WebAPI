@@ -28,10 +28,10 @@ public class LoginController : ControllerBase
             return NotFound();
         }
     }
-    /*
+    
     [HttpGet("loginwithtoken")]
     public async Task<ActionResult> LoginWithToken(string token)
     {
         return Ok(await _authenticationService.LoginWithToken(token));
-    }*/
+    }
 }

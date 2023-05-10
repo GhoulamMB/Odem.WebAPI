@@ -2,9 +2,8 @@
 
 public class OdemTransferResponse
 {
-    public string? FromName { get; set; }
-    public string? ToName { get; set; }
+    public required string PartyOne { get; set; }
+    public required string PartyTwo { get; set; }
     public double Amount { get; set; }
     public DateTime Date { get; set; }
-    public TransactionType Type { get; set; }
 }

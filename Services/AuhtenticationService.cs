@@ -35,7 +35,6 @@ public class AuthenticationService : IAuthenticationService
     {
         var client = _context.Clients?
             .Include(c => c.Wallet)
-            .ThenInclude(w => w.Transactions)
             .Include(c => c.Address)
             .Include(c => c.Tickets)
             .ThenInclude(m => m.HandledBy)
@@ -48,7 +47,7 @@ public class AuthenticationService : IAuthenticationService
 
         result!.Wallet.Transactions = _context.OdemTransfers!
             .Include(t => t.From)
-            .Where(t=>t.From.Id == result.Wallet.Id)
+            .Where(t=>t.From.Id == result.Wallet.Id || t.To.Id == result.Wallet.Id)
             .Include(t => t.To)
             .ToList();
 
@@ -70,7 +69,7 @@ public class AuthenticationService : IAuthenticationService
 
         result!.Wallet.Transactions = _context.OdemTransfers!
             .Include(t => t.From)
-            .Where(t=>t.From.Id == result.Wallet.Id)
+            .Where(t=>t.From.Id == result.Wallet.Id || t.To.Id == result.Wallet.Id)
             .Include(t => t.To)
             .ToList();
 
