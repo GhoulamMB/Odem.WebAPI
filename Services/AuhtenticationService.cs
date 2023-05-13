@@ -104,15 +104,16 @@ public class AuthenticationService : IAuthenticationService
         result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
         var exists = _context.OneSignalIds?.Any(c => c.Uid == client.Uid);
+        var onesignalid = new OneSignalIds { PlayerId = oneSignalId, Uid = client.Uid };
         if (!exists!.Value)
         {
-            _context.OneSignalIds?.Add(new OneSignalIds{ PlayerId = oneSignalId, Uid = client.Uid });
+            _context.OneSignalIds?.Add(onesignalid);
             _context.SaveChanges();
         }
         return Task.FromResult(result);
     }
 
-    public Task<ClientResponse?> LoginWithToken(string token)
+    public Task<ClientResponse> LoginWithToken(string token)
     {
         var userId = _tokenService.RetrieveClientId(token);
         var client = FindUserById(userId.Result).Result;
@@ -121,9 +122,9 @@ public class AuthenticationService : IAuthenticationService
             return null!;
         }
 
-        var result = new ClientResponse()
+        var result = new ClientResponse
         {
-            FirstName = client!.FirstName,
+            FirstName = client.FirstName,
             LastName = client.LastName,
             Address = client.Address,
             Email = client.Email,
@@ -132,11 +133,11 @@ public class AuthenticationService : IAuthenticationService
             Wallet = _mapper.Map<WalletResponse>(client.Wallet),
             Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets),
             RecievedRequests = client.RecievedRequests,
-            SentRequests = client.SentRequests
+            SentRequests = client.SentRequests,
+            Token = token
         };
-        result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
-        return Task.FromResult(result)!;
+        return Task.FromResult(result);
     }
 
     public Task<bool> ChangePassword(string email,string password)

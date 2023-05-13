@@ -71,6 +71,12 @@ public class TransactionService : ITransactionService
             .Include(c => c.Wallet)
             .Include(t => t.Wallet.Transactions)
             .First(c => c.Uid == userId);
+        
+        client.Wallet.Transactions = _context.OdemTransfers!
+            .Include(t => t.From)
+            .Where(t=>t.From.Id == client.Wallet.Id || t.To.Id == client.Wallet.Id)
+            .Include(t => t.To)
+            .ToList();
 
         var response = _mapper.Map<List<OdemTransferResponse>>(client?.Wallet.Transactions);
         return Task.FromResult(response);
