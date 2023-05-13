@@ -39,7 +39,8 @@ public class TransactionService : ITransactionService
             From = fromClient.Wallet,
             PartyOne = $"{fromClient.FirstName} {fromClient.LastName}",
             PartyTwo = $"{toClient.FirstName} {toClient.LastName}",
-            To = toClient.Wallet
+            To = toClient.Wallet,
+            Date = DateTime.Now
         };
         
         _context.OdemTransfers?.Add(To);
@@ -87,7 +88,8 @@ public class TransactionService : ITransactionService
             From = from,
             To = to,
             Checked = false,
-            Reason = reason
+            Reason = reason,
+            TimeStamp = DateTime.Now
         };
         _context.TransferRequests?.Add(request);
         clientFrom.SentRequests.Add(request);

@@ -26,6 +26,10 @@ public class TokenService
         return Task.FromResult(clientId);
     }
 
+    public Task<bool> TokenExist(string token)
+    {
+        return Task.FromResult(_tokens.ContainsKey(token));
+    }
     private string TokenGenerator()
     {
         bool lowerCase = true;

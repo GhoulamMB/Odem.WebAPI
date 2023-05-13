@@ -44,7 +44,8 @@ public class SupportService : ISupportService
                     isClientMessage = true
                 }
             },
-            HandledBy = admin!
+            HandledBy = admin!,
+            CreationDate = DateTime.Now
         };
         _context.Tickets?.Add(ticket);
         _context.SaveChanges();

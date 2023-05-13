@@ -63,7 +63,9 @@ public class AuthenticationService : IAuthenticationService
             .Include(c => c.Tickets)
             .ThenInclude(m => m.HandledBy)
             .Include(msg => msg.Tickets)
-            .ThenInclude(msg => msg.Messages);
+            .ThenInclude(msg => msg.Messages)
+            .Include(r => r.RecievedRequests)
+            .Include(r => r.SentRequests);
 
         var result = client?.First(c => c.Uid == userId);
 
@@ -110,10 +112,14 @@ public class AuthenticationService : IAuthenticationService
         return Task.FromResult(result);
     }
 
-    public Task<ClientResponse> LoginWithToken(string token)
+    public Task<ClientResponse?> LoginWithToken(string token)
     {
         var userId = _tokenService.RetrieveClientId(token);
         var client = FindUserById(userId.Result).Result;
+        if (client is null)
+        {
+            return null!;
+        }
 
         var result = new ClientResponse()
         {
@@ -124,11 +130,13 @@ public class AuthenticationService : IAuthenticationService
             Phone = client.Phone,
             Uid = client.Uid,
             Wallet = _mapper.Map<WalletResponse>(client.Wallet),
-            Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets)
+            Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets),
+            RecievedRequests = client.RecievedRequests,
+            SentRequests = client.SentRequests
         };
         result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
-        return Task.FromResult(result);
+        return Task.FromResult(result)!;
     }
 
     public Task<bool> ChangePassword(string email,string password)

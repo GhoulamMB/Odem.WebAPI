@@ -108,7 +108,8 @@ public class AdminService : IAdminService
                     isClientMessage = isClientMessage
                 }
             },
-            HandledBy = admin!
+            HandledBy = admin!,
+            CreationDate = DateTime.Now
         };
         _context?.Tickets!.Add(ticket);
         _context!.SaveChanges();
