@@ -16,12 +16,11 @@ public class LoginController : ControllerBase
     }
 
     [HttpGet("login")]
-    public async Task<ActionResult<ClientResponse>> Login(string email,string password)
+    public async Task<ActionResult<ClientResponse>> Login(string email,string password, string oneSignalId)
     {
-        
         try
         {
-            return Ok(await _authenticationService.Login(email, password));
+            return Ok(await _authenticationService.Login(email, password,oneSignalId));
         }
         catch (Exception)
         {

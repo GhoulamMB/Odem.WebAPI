@@ -3,6 +3,7 @@ using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
 using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
+using RestSharp;
 
 namespace Odem.WebAPI.Controllers
 {
@@ -11,9 +12,9 @@ namespace Odem.WebAPI.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
-        public TransactionsController()
+        public TransactionsController(ITransactionService transactionService)
         {
-            _transactionService = new TransactionService();
+            _transactionService = transactionService;
         }
         
         [HttpPost]

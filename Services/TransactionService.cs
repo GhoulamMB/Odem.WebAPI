@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
 using Odem.WebAPI.Models.response;
+using RestSharp;
 
 namespace Odem.WebAPI.Services;
 
@@ -10,9 +11,10 @@ public class TransactionService : ITransactionService
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
-
-    public TransactionService()
+    private readonly NotificationsService _notificationsService;
+    public TransactionService(NotificationsService notificationsService)
     {
+        _notificationsService = notificationsService;
         _context = new();
         var mapperConfiguration = new MapperConfiguration(cfg =>
         {
@@ -22,6 +24,8 @@ public class TransactionService : ITransactionService
     }
     public Task<bool> CreateTransaction(TransactionRequest transaction)
     {
+        #region transaction
+        
         var fromClient = _context.Clients?.Include(c => c.Wallet).First(c => c.Email == transaction.FromEmail);
         var toClient = _context.Clients?.Include(c=>c.Wallet).First(c => c.Email == transaction.ToEmail);
         if (fromClient is null || toClient is null)
@@ -52,6 +56,11 @@ public class TransactionService : ITransactionService
         _context.OdemTransfers?.Add(To);
         
         _context.SaveChanges();
+        #endregion
+
+        var message = $"{To.PartyOne} has sent you {transaction.Amount}DZD";
+        var playerId = _context.OneSignalIds?.First(o => o.Uid == toClient.Uid).PlayerId;
+        _notificationsService?.SendNotification(playerId!, message);
         return Task.FromResult(true);
     }
 

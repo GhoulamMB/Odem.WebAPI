@@ -76,7 +76,7 @@ public class AuthenticationService : IAuthenticationService
         return Task.FromResult(result)!;
     }
 
-    public Task<ClientResponse> Login(string email, string password)
+    public Task<ClientResponse> Login(string email, string password, string oneSignalId)
     {
         var client = FindUserByEmail(email).Result;
 
@@ -101,6 +101,12 @@ public class AuthenticationService : IAuthenticationService
         var token = _tokenService.RegisterToken(result.Uid);
         result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
+        var exists = _context.OneSignalIds?.Any(c => c.Uid == client.Uid);
+        if (!exists!.Value)
+        {
+            _context.OneSignalIds?.Add(new OneSignalIds{ PlayerId = oneSignalId, Uid = client.Uid });
+            _context.SaveChanges();
+        }
         return Task.FromResult(result);
     }
 

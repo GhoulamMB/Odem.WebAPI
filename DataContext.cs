@@ -10,6 +10,7 @@ public class DataContext : DbContext
     public DbSet<Ticket>? Tickets { get; set; }
     public DbSet<Wallet>? Wallets { get; set; }
     public DbSet<TransferRequest>? TransferRequests { get; set; }
+    public DbSet<OneSignalIds>? OneSignalIds { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

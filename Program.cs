@@ -20,6 +20,7 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<NotificationsService>();
 builder.WebHost.UseUrls("http://*:5000");
 var app = builder.Build();
 
