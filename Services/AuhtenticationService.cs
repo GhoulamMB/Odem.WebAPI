@@ -104,10 +104,14 @@ public class AuthenticationService : IAuthenticationService
         return Task.FromResult(result);
     }
 
-    public Task<ClientResponse> LoginWithToken(string token)
+    public Task<ClientResponse?> LoginWithToken(string token)
     {
         var userId = _tokenService.RetrieveClientId(token);
         var client = FindUserById(userId.Result).Result;
+        if (client is null)
+        {
+            return null!;
+        }
 
         var result = new ClientResponse()
         {
@@ -122,7 +126,7 @@ public class AuthenticationService : IAuthenticationService
         };
         result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
-        return Task.FromResult(result);
+        return Task.FromResult(result)!;
     }
 
     public Task<bool> ChangePassword(string email,string password)

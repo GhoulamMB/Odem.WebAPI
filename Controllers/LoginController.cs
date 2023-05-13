@@ -30,8 +30,16 @@ public class LoginController : ControllerBase
     }
     
     [HttpGet("loginwithtoken")]
-    public async Task<ActionResult> LoginWithToken(string token)
+    public async Task<ActionResult<ClientResponse>> LoginWithToken(string token)
     {
-        return Ok(await _authenticationService.LoginWithToken(token));
+        try
+        {
+            var response = await _authenticationService.LoginWithToken(token);
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            return NotFound();
+        }
     }
 }
