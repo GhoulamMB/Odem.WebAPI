@@ -37,7 +37,7 @@ public class LoginController : ControllerBase
             var response = await _authenticationService.LoginWithToken(token);
             return Ok(response);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return NotFound();
         }

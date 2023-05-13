@@ -63,7 +63,9 @@ public class AuthenticationService : IAuthenticationService
             .Include(c => c.Tickets)
             .ThenInclude(m => m.HandledBy)
             .Include(msg => msg.Tickets)
-            .ThenInclude(msg => msg.Messages);
+            .ThenInclude(msg => msg.Messages)
+            .Include(r => r.RecievedRequests)
+            .Include(r => r.SentRequests);
 
         var result = client?.First(c => c.Uid == userId);
 
@@ -122,7 +124,9 @@ public class AuthenticationService : IAuthenticationService
             Phone = client.Phone,
             Uid = client.Uid,
             Wallet = _mapper.Map<WalletResponse>(client.Wallet),
-            Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets)
+            Tickets = _mapper.Map<List<TicketResponse>>(client.Tickets),
+            RecievedRequests = client.RecievedRequests,
+            SentRequests = client.SentRequests
         };
         result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);

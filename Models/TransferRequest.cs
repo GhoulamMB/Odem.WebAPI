@@ -11,5 +11,5 @@ public class TransferRequest
     public required string To { get; set; }
     public bool Checked { get; set; }
     public required string Reason { get; set; }
-    public DateTime TimeStamp { get; } = DateTime.Now;
+    public required DateTime TimeStamp { get; init; }
 }
