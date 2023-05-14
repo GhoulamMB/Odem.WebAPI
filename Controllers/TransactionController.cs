@@ -3,7 +3,6 @@ using Odem.WebAPI.Models;
 using Odem.WebAPI.Models.requests;
 using Odem.WebAPI.Models.response;
 using Odem.WebAPI.Services;
-using RestSharp;
 
 namespace Odem.WebAPI.Controllers;
 
