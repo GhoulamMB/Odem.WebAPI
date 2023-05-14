@@ -10,7 +10,8 @@ public interface ITransactionService
     public Task<List<OdemTransferResponse>> GetTransactions(string userId);
 
     public Task<TransferRequest> CreateTransferRequest(string from,string to,double amount,string reason);
-    
+
+    public Task<List<TransferRequest>> GetRequests(string userId);
     public Task<bool> AcceptTransferRequest(string Id);
     public Task<bool> DeclineTransferRequest(string Id);
 }

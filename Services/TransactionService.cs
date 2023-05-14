@@ -106,6 +106,14 @@ public class TransactionService : ITransactionService
         return Task.FromResult(request);
     }
 
+    public Task<List<TransferRequest>> GetRequests(string userId)
+    {
+        var client = _context.Clients?
+            .Include(c => c.RecievedRequests)
+            .First(c => c.Uid == userId);
+        return client?.RecievedRequests != null ? Task.FromResult(client.RecievedRequests) : null!;
+    }
+
     public Task<bool> AcceptTransferRequest(string Id)
     {
         var request = _context.TransferRequests?.First(r => r.Id == Id);
