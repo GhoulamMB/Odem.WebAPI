@@ -58,4 +58,16 @@ public class SupportController : ControllerBase
         }
         return Ok(ticket);
     }
+
+    [HttpGet("ticketMessages")]
+    public async Task<ActionResult<List<MessageResponse>>> getTicketMessages(string ticketId)
+    {
+        var result = await _supportService.getTicketMessages(ticketId);
+        if (result is not null)
+        {
+            return Ok(result);
+        }
+
+        return NotFound();
+    }
 }

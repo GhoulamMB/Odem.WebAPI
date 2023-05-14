@@ -91,4 +91,13 @@ public class SupportService : ISupportService
         _context.SaveChanges();
         return Task.FromResult(_mapper.Map<MessageResponse>(messageReq));
     }
+
+    public Task<List<MessageResponse>> getTicketMessages(string ticketId)
+    {
+        var ticket = _context.Tickets?
+            .Include(t => t.Messages)
+            .First(t => t.Id == ticketId);
+        var response = _mapper.Map<List<MessageResponse>>(ticket?.Messages);
+        return Task.FromResult(response);
+    }
 }
