@@ -82,4 +82,11 @@ public class TransactionsController : ControllerBase
 
         return NotFound();
     }
+
+    [HttpGet("walletBalance")]
+    public async Task<ActionResult<double>> getWalletBalance(string walletId)
+    {
+        var result = await _transactionService.getWalletBalance(walletId);
+        return Ok(result);
+    }
 }

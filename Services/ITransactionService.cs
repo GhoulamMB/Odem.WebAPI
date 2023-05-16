@@ -14,4 +14,5 @@ public interface ITransactionService
     public Task<List<TransferRequest>> GetRequests(string userId);
     public Task<bool> AcceptTransferRequest(string Id);
     public Task<bool> DeclineTransferRequest(string Id);
+    public Task<double> getWalletBalance(string walletId);
 }

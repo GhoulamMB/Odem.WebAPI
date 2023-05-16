@@ -27,7 +27,7 @@ public class TransactionService : ITransactionService
         
         var fromClient = _context.Clients?.Include(c => c.Wallet).First(c => c.Email == transaction.FromEmail);
         var toClient = _context.Clients?.Include(c=>c.Wallet).First(c => c.Email == transaction.ToEmail);
-        if (fromClient is null || toClient is null)
+        if (fromClient is null || toClient is null || fromClient.Wallet.Balance <transaction.Amount)
         {
             return false;
         }
@@ -77,15 +77,16 @@ public class TransactionService : ITransactionService
             .Include(t => t.To)
             .ToList();
 
-        var response = _mapper.Map<List<OdemTransferResponse>>(client?.Wallet.Transactions);
+        var response = _mapper.Map<List<OdemTransferResponse>>(client.Wallet.Transactions);
         return Task.FromResult(response);
     }
 
-    public Task<TransferRequest> CreateTransferRequest(string from,string to,double amount,string reason)
+    public async Task<TransferRequest> CreateTransferRequest(string from,string to,double amount,string reason)
     {
         var clientFrom = _context.Clients?.First(c => c.Email == from);
         var clientTo = _context.Clients?.First(c => c.Email == to);
-        if (clientFrom is null || clientTo is null) return null!;
+        if (clientFrom is null
+            || clientTo is null) return null!;
 
         var request = new TransferRequest()
         {
@@ -101,8 +102,11 @@ public class TransactionService : ITransactionService
         clientTo.RecievedRequests.Add(request);
         _context.Clients?.Update(clientFrom);
         _context.Clients?.Update(clientTo);
-        _context.SaveChanges();
-        return Task.FromResult(request);
+        await _context.SaveChangesAsync();
+        var message = $"{clientFrom.Email} has requested {amount}DZD from you";
+        var playerId = _context.OneSignalIds?.First(o => o.Uid == clientTo.Uid).PlayerId;
+        await _notificationsService.SendNotification(playerId!, message);
+        return request;
     }
 
     public Task<List<TransferRequest>> GetRequests(string userId)
@@ -113,30 +117,40 @@ public class TransactionService : ITransactionService
         return client?.RecievedRequests != null ? Task.FromResult(client.RecievedRequests) : null!;
     }
 
-    public Task<bool> AcceptTransferRequest(string Id)
+    public async Task<bool> AcceptTransferRequest(string Id)
     {
         var request = _context.TransferRequests?.First(r => r.Id == Id);
-        if (request is null) return Task.FromResult(false);
+        if (request is null) return false;
         request.Checked = true;
         _context.TransferRequests?.Update(request);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         var transaction = new TransactionRequest()
         {
             Amount = request.Amount,
             FromEmail = request.To,
             ToEmail = request.From
         };
-        CreateTransaction(transaction);
-        return Task.FromResult(true);
+        await CreateTransaction(transaction);
+        return true;
     }
 
-    public Task<bool> DeclineTransferRequest(string Id)
+    public async Task<bool> DeclineTransferRequest(string Id)
     {
         var request = _context.TransferRequests?.First(r => r.Id == Id);
-        if (request is null) return Task.FromResult(false);
+        if (request is null) return false;
         request.Checked = true;
         _context.TransferRequests?.Update(request);
-        _context.SaveChanges();
-        return Task.FromResult(true);
+        await _context.SaveChangesAsync();
+        var client = _context.Clients?.First(c => c.Email == request.From);
+        var message = $"{request.To} has declined your {request.Amount}DZD request";
+        var playerId = _context.OneSignalIds?.First(o => o.Uid == client!.Uid).PlayerId;
+        await _notificationsService.SendNotification(playerId!, message);
+        return true;
+    }
+
+    public Task<double> getWalletBalance(string walletId)
+    {
+        var wallet = _context.Wallets?.First(w => w.Id == walletId);
+        return Task.FromResult(wallet!.Balance);
     }
 }
