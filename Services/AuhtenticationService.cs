@@ -103,17 +103,27 @@ public class AuthenticationService : IAuthenticationService
         var token = _tokenService.RegisterToken(result.Uid);
         result.Token = token;
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
-        var exists = _context.OneSignalIds?.Any(c => c.Uid == client.Uid);
-        var onesignalid = new OneSignalIds { PlayerId = oneSignalId, Uid = client.Uid };
-        if (!exists!.Value)
+        
+        var existingOneSignalId = _context.OneSignalIds.FirstOrDefault(c => c.Uid == client.Uid);
+        if (existingOneSignalId == null)
         {
-            _context.OneSignalIds?.Add(onesignalid);
-            _context.SaveChanges();
+            // If no OneSignalIds object exists with the given Uid, create a new one and add it to the database
+            var newOneSignalId = new OneSignalIds { PlayerId = oneSignalId, Uid = client.Uid };
+            _context.OneSignalIds.Add(newOneSignalId);
         }
+        else if (existingOneSignalId.PlayerId != oneSignalId)
+        {
+            // If a OneSignalIds object exists with the given Uid but has a different PlayerId, update it in the database
+            existingOneSignalId.PlayerId = oneSignalId;
+            _context.OneSignalIds.Update(existingOneSignalId);
+        }
+
+        // Save changes to the database
+        _context.SaveChanges();
         return Task.FromResult(result);
     }
 
-    public Task<ClientResponse> LoginWithToken(string token)
+    public Task<ClientResponse> LoginWithToken(string token, string oneSignalId)
     {
         var userId = _tokenService.RetrieveClientId(token);
         var client = FindUserById(userId.Result).Result;
@@ -137,6 +147,23 @@ public class AuthenticationService : IAuthenticationService
             Token = token
         };
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
+        
+        var existingOneSignalId = _context.OneSignalIds.FirstOrDefault(c => c.Uid == client.Uid);
+        if (existingOneSignalId == null)
+        {
+            // If no OneSignalIds object exists with the given Uid, create a new one and add it to the database
+            var newOneSignalId = new OneSignalIds { PlayerId = oneSignalId, Uid = client.Uid };
+            _context.OneSignalIds.Add(newOneSignalId);
+        }
+        else if (existingOneSignalId.PlayerId != oneSignalId)
+        {
+            // If a OneSignalIds object exists with the given Uid but has a different PlayerId, update it in the database
+            existingOneSignalId.PlayerId = oneSignalId;
+            _context.OneSignalIds.Update(existingOneSignalId);
+        }
+
+        // Save changes to the database
+        _context.SaveChanges();
         return Task.FromResult(result);
     }
 

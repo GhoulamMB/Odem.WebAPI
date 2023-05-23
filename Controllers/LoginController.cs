@@ -29,11 +29,11 @@ public class LoginController : ControllerBase
     }
     
     [HttpGet("loginwithtoken")]
-    public async Task<ActionResult<ClientResponse>> LoginWithToken(string token)
+    public async Task<ActionResult<ClientResponse>> LoginWithToken(string token, string oneSignalId)
     {
         try
         {
-            var response = await _authenticationService.LoginWithToken(token);
+            var response = await _authenticationService.LoginWithToken(token,oneSignalId);
             return Ok(response);
         }
         catch (Exception)

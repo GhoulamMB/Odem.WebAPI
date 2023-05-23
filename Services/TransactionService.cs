@@ -27,7 +27,10 @@ public class TransactionService : ITransactionService
         
         var fromClient = _context.Clients?.Include(c => c.Wallet).First(c => c.Email == transaction.FromEmail);
         var toClient = _context.Clients?.Include(c=>c.Wallet).First(c => c.Email == transaction.ToEmail);
-        if (fromClient is null || toClient is null || fromClient.Wallet.Balance <transaction.Amount)
+        if (fromClient is null ||
+            toClient is null ||
+            fromClient.Email == toClient.Email ||
+            fromClient.Wallet.Balance <transaction.Amount)
         {
             return false;
         }
@@ -83,6 +86,10 @@ public class TransactionService : ITransactionService
 
     public async Task<TransferRequest> CreateTransferRequest(string from,string to,double amount,string reason)
     {
+        if (from == to)
+        {
+            return null!;
+        }
         var clientFrom = _context.Clients?.First(c => c.Email == from);
         var clientTo = _context.Clients?.First(c => c.Email == to);
         if (clientFrom is null
