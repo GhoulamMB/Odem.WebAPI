@@ -148,18 +148,18 @@ public class AuthenticationService : IAuthenticationService
         };
         _mapper.Map(client.Wallet.Transactions,result.Wallet.Transactions);
         
-        var existingOneSignalId = _context.OneSignalIds.FirstOrDefault(c => c.Uid == client.Uid);
+        var existingOneSignalId = _context.OneSignalIds?.FirstOrDefault(c => c.Uid == client.Uid);
         if (existingOneSignalId == null)
         {
             // If no OneSignalIds object exists with the given Uid, create a new one and add it to the database
             var newOneSignalId = new OneSignalIds { PlayerId = oneSignalId, Uid = client.Uid };
-            _context.OneSignalIds.Add(newOneSignalId);
+            _context.OneSignalIds?.Add(newOneSignalId);
         }
-        else if (existingOneSignalId.PlayerId != oneSignalId)
+        else if (existingOneSignalId.PlayerId == null! || existingOneSignalId.PlayerId != oneSignalId)
         {
             // If a OneSignalIds object exists with the given Uid but has a different PlayerId, update it in the database
             existingOneSignalId.PlayerId = oneSignalId;
-            _context.OneSignalIds.Update(existingOneSignalId);
+            _context.OneSignalIds?.Update(existingOneSignalId);
         }
 
         // Save changes to the database

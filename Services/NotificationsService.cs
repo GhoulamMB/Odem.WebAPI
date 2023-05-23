@@ -7,7 +7,7 @@ namespace Odem.WebAPI.Services;
 public class NotificationsService
 {
     private const string URL = "https://onesignal.com/api/v1/notifications";
-    private const string APP_ID = "e9e83526-e6b3-4115-90b0-77cd69f3afd4";
+    private const string APP_ID = "47f46191-c166-40ca-995b-1c1942125df2";
     
     public async Task<bool> SendNotification(string playerId, string message)
     {
