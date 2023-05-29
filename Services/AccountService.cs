@@ -36,18 +36,18 @@ public class AccountService : IAccountService
     {
         var client = _context.Clients?.First(c => c.Uid == userId);
         
+        if(client is null) return Task.FromResult(false);
+        
         if (email is not null)
         {
-            client!.Email = email;
-            _context.SaveChanges();
-            return Task.FromResult(true);
+            if (_context.Clients!.Any(c => c.Email == email)) return Task.FromResult(false);
+            client.Email = email;
         }
         if (password is not null)
         {
-            client!.Password = Crypto.EncryptBcrypt(password);
-            _context.SaveChanges();
-            return Task.FromResult(true);
+            client.Password = Crypto.EncryptBcrypt(password);
         }
-        return Task.FromResult(false);
+        _context.SaveChanges();
+        return Task.FromResult(true);
     }
 }
