@@ -28,5 +28,9 @@ public class DataContext : DbContext
             .UseSqlServer("Server=85.215.99.211;User ID=sa;Password=153759759mM;Database=Odemdbdev;TrustServerCertificate=True;Trusted_Connection=True;Integrated Security=false;"
             ,so=>so.EnableRetryOnFailure()
             );
+        /*.UseNpgsql("Host=85.215.99.211;Database=odemdb;Username=sa;Password=153759759mM",
+        opt => opt.EnableRetryOnFailure()
+            );
+        */
     }
 }
