@@ -63,7 +63,15 @@ public class TransactionService : ITransactionService
 
         var message = $"{To.PartyOne} has sent you {transaction.Amount}DZD";
         var playerId = _context.OneSignalIds?.First(o => o.Uid == toClient.Uid).PlayerId;
-        await _notificationsService.SendNotification(playerId!, message);
+        try
+        {
+            await _notificationsService.SendNotification(playerId!, message);
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception or log the error if needed
+            Console.WriteLine($"An error occurred while sending the notification: {ex.Message}");
+        }
         return true;
     }
 
